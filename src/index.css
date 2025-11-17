@@ -1,0 +1,145 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 144 34% 23%;
+    --card: 0 0% 100%;
+    --card-foreground: 144 34% 23%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 144 34% 23%;
+    --primary: 83 55% 71%;
+    --primary-foreground: 144 34% 23%;
+    --secondary: 144 34% 23%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 83 30% 90%;
+    --muted-foreground: 144 34% 35%;
+    --accent: 83 40% 85%;
+    --accent-foreground: 144 34% 23%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 83 20% 85%;
+    --input: 83 20% 85%;
+    --ring: 83 55% 71%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 144 34% 23%;
+    --foreground: 0 0% 100%;
+    --card: 144 34% 23%;
+    --card-foreground: 0 0% 100%;
+    --popover: 144 34% 23%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 83 55% 71%;
+    --primary-foreground: 144 34% 23%;
+    --secondary: 144 34% 23%;
+    --secondary-foreground: 83 55% 71%;
+    --muted: 144 34% 30%;
+    --muted-foreground: 83 30% 75%;
+    --accent: 144 34% 28%;
+    --accent-foreground: 83 55% 71%;
+    --destructive: 0 62.8% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 144 34% 30%;
+    --input: 144 34% 30%;
+    --ring: 83 55% 71%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    margin: 0;
+    min-height: 100vh;
+  }
+  #root {
+    min-height: 100vh;
+  }
+}
+
+@layer utilities {
+  .animate-in {
+    animation-duration: 0.3s;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    animation-fill-mode: both;
+  }
+  
+  .fade-in {
+    animation-name: fadeIn;
+  }
+  
+  .slide-in-from-bottom-2 {
+    animation-name: slideInFromBottom;
+  }
+  
+  .slide-in-from-bottom-4 {
+    animation-name: slideInFromBottom4;
+  }
+  
+  .slide-in-from-top-2 {
+    animation-name: slideInFromTop;
+  }
+  
+  .slide-in-from-left-2 {
+    animation-name: slideInFromLeft;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideInFromBottom {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes slideInFromBottom4 {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes slideInFromTop {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes slideInFromLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+}
