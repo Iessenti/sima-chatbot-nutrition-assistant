@@ -11,7 +11,7 @@ export interface OpenRouterConfig {
 export async function callLLM(
   messages: ChatMessage[],
   config: OpenRouterConfig,
-  userData?: { profile: unknown; entries: unknown[]; goal: unknown; context?: unknown }
+  userData?: { profile?: unknown; entries: unknown[]; goal?: unknown; context?: unknown }
 ): Promise<string> {
   const { apiKey, model = 'openai/gpt-4o-mini' } = config
   

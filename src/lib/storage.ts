@@ -1,4 +1,4 @@
-import type { UserProfile, DailyEntry, KBJUGoal, ChatMessage, UserContext } from './types'
+import type { UserProfile, DailyEntry, KBJUGoal, ChatMessage, UserContext, ActivityLogEntry } from './types'
 
 const STORAGE_KEYS = {
   PROFILE: 'kbju_profile',
@@ -6,6 +6,7 @@ const STORAGE_KEYS = {
   GOAL: 'kbju_goal',
   CHAT_HISTORY: 'kbju_chat_history',
   USER_CONTEXT: 'kbju_user_context',
+  ACTIVITY_LOG: 'kbju_activity_log',
 } as const
 
 export function saveProfile(profile: UserProfile): void {
@@ -56,6 +57,16 @@ export function getDailyEntries(): DailyEntry[] {
 export function getDailyEntryByDate(date: string): DailyEntry | null {
   const entries = getDailyEntries()
   return entries.find(e => e.date === date) || null
+}
+
+export function deleteDailyEntry(entryId: string): void {
+  try {
+    const entries = getDailyEntries()
+    const filtered = entries.filter(e => e.id !== entryId)
+    localStorage.setItem(STORAGE_KEYS.ENTRIES, JSON.stringify(filtered))
+  } catch (error) {
+    console.error('Failed to delete daily entry:', error)
+  }
 }
 
 export function saveGoal(goal: KBJUGoal): void {
@@ -109,6 +120,36 @@ export function getUserContext(): UserContext | null {
   } catch (error) {
     console.error('Failed to get user context:', error)
     return null
+  }
+}
+
+export function saveActivityLogEntry(entry: ActivityLogEntry): void {
+  try {
+    const entries = getActivityLog()
+    entries.push(entry)
+    localStorage.setItem(STORAGE_KEYS.ACTIVITY_LOG, JSON.stringify(entries))
+  } catch (error) {
+    console.error('Failed to save activity log entry:', error)
+  }
+}
+
+export function getActivityLog(): ActivityLogEntry[] {
+  try {
+    const data = localStorage.getItem(STORAGE_KEYS.ACTIVITY_LOG)
+    return data ? JSON.parse(data) : []
+  } catch (error) {
+    console.error('Failed to get activity log:', error)
+    return []
+  }
+}
+
+export function deleteActivityLogEntry(entryId: string): void {
+  try {
+    const entries = getActivityLog()
+    const filtered = entries.filter(e => e.id !== entryId)
+    localStorage.setItem(STORAGE_KEYS.ACTIVITY_LOG, JSON.stringify(filtered))
+  } catch (error) {
+    console.error('Failed to delete activity log entry:', error)
   }
 }
 

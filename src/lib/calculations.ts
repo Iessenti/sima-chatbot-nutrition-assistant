@@ -48,21 +48,57 @@ export function calculateKBJUGoal(profile: UserProfile): KBJUGoal {
 }
 
 export function calculateDailyKBJU(entry: DailyEntry): KBJUGoal {
-  const total = entry.meals.reduce(
+  const total = (entry.meals || []).reduce(
     (acc, meal) => ({
-      calories: acc.calories + meal.calories,
-      protein: acc.protein + meal.protein,
-      fat: acc.fat + meal.fat,
-      carbs: acc.carbs + meal.carbs,
+      calories: acc.calories + (meal.calories || 0),
+      protein: acc.protein + (meal.protein || 0),
+      fat: acc.fat + (meal.fat || 0),
+      carbs: acc.carbs + (meal.carbs || 0),
     }),
     { calories: 0, protein: 0, fat: 0, carbs: 0 }
   )
-  
+
+  const activityCalories = entry.activity?.calories || 0
+
   return {
-    calories: Math.round(total.calories),
+    calories: Math.round(Math.max(0, total.calories - activityCalories)),
     protein: Math.round(total.protein),
     fat: Math.round(total.fat),
     carbs: Math.round(total.carbs),
+  }
+}
+
+export function calculateDailyKBJUWithActivity(entry: DailyEntry): {
+  consumed: KBJUGoal
+  burned: number
+  net: KBJUGoal
+} {
+  const consumed = (entry.meals || []).reduce(
+    (acc, meal) => ({
+      calories: acc.calories + (meal.calories || 0),
+      protein: acc.protein + (meal.protein || 0),
+      fat: acc.fat + (meal.fat || 0),
+      carbs: acc.carbs + (meal.carbs || 0),
+    }),
+    { calories: 0, protein: 0, fat: 0, carbs: 0 }
+  )
+
+  const burned = entry.activity?.calories || 0
+
+  return {
+    consumed: {
+      calories: Math.round(consumed.calories),
+      protein: Math.round(consumed.protein),
+      fat: Math.round(consumed.fat),
+      carbs: Math.round(consumed.carbs),
+    },
+    burned,
+    net: {
+      calories: Math.round(Math.max(0, consumed.calories - burned)),
+      protein: Math.round(consumed.protein),
+      fat: Math.round(consumed.fat),
+      carbs: Math.round(consumed.carbs),
+    },
   }
 }
 

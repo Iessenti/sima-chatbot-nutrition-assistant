@@ -5,11 +5,14 @@ import {
   saveProfile,
   getDailyEntries,
   saveDailyEntry,
+  deleteDailyEntry,
   getGoal,
   saveGoal,
   getUserContext,
   saveUserContext,
 } from '@/lib/storage'
+import { validateProfile, validateEntry, validateGoal } from '@/lib/validation'
+import { showToast } from '@/components/Toast'
 
 interface DataStore {
   profile: UserProfile | null
@@ -20,6 +23,7 @@ interface DataStore {
   updateProfile: (updates: Partial<UserProfile>) => void
   addEntry: (entry: DailyEntry) => void
   updateEntry: (entry: DailyEntry) => void
+  deleteEntry: (entryId: string) => void
   setGoal: (goal: KBJUGoal) => void
   updateContext: (updates: Partial<UserContext>) => void
   loadData: () => void
@@ -32,6 +36,11 @@ export const useDataStore = create<DataStore>((set, get) => ({
   context: null,
   
   setProfile: (profile) => {
+    const validation = validateProfile(profile)
+    if (!validation.success) {
+      showToast(`Ошибка валидации профиля: ${validation.error}`, 'error')
+      return
+    }
     saveProfile(profile)
     set({ profile })
   },
@@ -49,6 +58,11 @@ export const useDataStore = create<DataStore>((set, get) => ({
   },
   
   addEntry: (entry) => {
+    const validation = validateEntry(entry)
+    if (!validation.success) {
+      showToast(`Ошибка валидации записи: ${validation.error}`, 'error')
+      return
+    }
     saveDailyEntry(entry)
     set((state) => ({
       entries: [...state.entries, entry],
@@ -56,13 +70,30 @@ export const useDataStore = create<DataStore>((set, get) => ({
   },
   
   updateEntry: (entry) => {
+    const validation = validateEntry(entry)
+    if (!validation.success) {
+      showToast(`Ошибка валидации записи: ${validation.error}`, 'error')
+      return
+    }
     saveDailyEntry(entry)
     set((state) => ({
       entries: state.entries.map((e) => (e.id === entry.id ? entry : e)),
     }))
   },
   
+  deleteEntry: (entryId) => {
+    deleteDailyEntry(entryId)
+    set((state) => ({
+      entries: state.entries.filter((e) => e.id !== entryId),
+    }))
+  },
+  
   setGoal: (goal) => {
+    const validation = validateGoal(goal)
+    if (!validation.success) {
+      showToast(`Ошибка валидации цели: ${validation.error}`, 'error')
+      return
+    }
     saveGoal(goal)
     set({ goal })
   },

@@ -1,12 +1,11 @@
-import type { UserProfile, ExtractedProfileData } from './types'
-import { calculateKBJUGoal } from './calculations'
+import type { UserProfile, LLMProfileData } from './types'
 
 /**
  * Умное обновление профиля из извлечённых данных
  * Объединяет существующие данные с новыми, обновляя только те поля, которые были извлечены
  */
 export function updateProfileFromExtractedData(
-  extractedData: ExtractedProfileData,
+  extractedData: LLMProfileData,
   currentProfile: UserProfile
 ): UserProfile {
   const updated: UserProfile = {
@@ -43,7 +42,7 @@ export function updateProfileFromExtractedData(
  * Проверяет, нужно ли пересчитать КБЖУ цели после обновления профиля
  */
 export function shouldRecalculateGoal(
-  extractedData: ExtractedProfileData,
+  extractedData: LLMProfileData,
   currentProfile: UserProfile
 ): boolean {
   // Пересчитываем если изменились ключевые параметры
@@ -61,7 +60,7 @@ export function shouldRecalculateGoal(
  * Получает список изменённых полей для сообщения пользователю
  */
 export function getChangedFields(
-  extractedData: ExtractedProfileData,
+  extractedData: LLMProfileData,
   currentProfile: UserProfile
 ): string[] {
   const changes: string[] = []

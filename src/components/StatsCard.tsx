@@ -3,9 +3,10 @@ import type { Stats } from '@/lib/types'
 
 interface StatsCardProps {
   stats: Stats
+  showCharts?: boolean
 }
 
-export function StatsCard({ stats }: StatsCardProps) {
+export function StatsCard({ stats, showCharts = false }: StatsCardProps) {
   return (
     <Card className="text-sm">
       <CardHeader className="pb-2 px-3 pt-3">
@@ -49,6 +50,33 @@ export function StatsCard({ stats }: StatsCardProps) {
             <div className="font-semibold">{stats.averageDailyCarbs} г</div>
           </div>
         </div>
+
+        {showCharts && (
+          <div className="mt-4 pt-4 border-t space-y-2">
+            <div className="text-xs font-medium mb-2">Прогресс по макронутриентам:</div>
+            {[
+              { label: 'Белки', value: stats.averageDailyProtein, goal: 100, color: 'bg-blue-500' },
+              { label: 'Жиры', value: stats.averageDailyFat, goal: 80, color: 'bg-yellow-500' },
+              { label: 'Углеводы', value: stats.averageDailyCarbs, goal: 200, color: 'bg-green-500' },
+            ].map((item) => {
+              const percentage = Math.min((item.value / item.goal) * 100, 100)
+              return (
+                <div key={item.label} className="space-y-1">
+                  <div className="flex justify-between text-xs">
+                    <span className="text-muted-foreground">{item.label}</span>
+                    <span>{item.value} / {item.goal} г</span>
+                  </div>
+                  <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+                    <div
+                      className={`h-full ${item.color} transition-all`}
+                      style={{ width: `${percentage}%` }}
+                    />
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
       </CardContent>
     </Card>
   )

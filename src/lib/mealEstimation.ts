@@ -1,4 +1,4 @@
-import type { ExtractedMealData } from './dataExtraction'
+import type { LLMMealData } from './types'
 
 const OPENROUTER_API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY || ''
 
@@ -63,7 +63,7 @@ export async function estimateMealKBJU(mealName: string): Promise<{
   }
 }
 
-export async function enrichMealData(meals: ExtractedMealData[]): Promise<ExtractedMealData[]> {
+export async function enrichMealData(meals: LLMMealData[]): Promise<LLMMealData[]> {
   const enriched = await Promise.all(
     meals.map(async (meal) => {
       if (meal.calories && meal.protein && meal.fat && meal.carbs) {
