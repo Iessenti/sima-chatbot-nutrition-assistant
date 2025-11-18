@@ -41,6 +41,7 @@ export interface MessageProcessorDependencies {
   messages: ChatMessage[];
   userMessage: ChatMessage;
   apiKey: string;
+  model?: string;
   setProfile: (profile: UserProfile) => void;
   updateProfile: (updates: Partial<UserProfile>) => void;
   addEntry: (entry: DailyEntry) => void;
@@ -382,7 +383,7 @@ export async function processMessage(
 
   const response = await callLLMWithContext(
     [...deps.messages, deps.userMessage],
-    { apiKey: deps.apiKey },
+    { apiKey: deps.apiKey, model: deps.model },
     llmContext
   );
 

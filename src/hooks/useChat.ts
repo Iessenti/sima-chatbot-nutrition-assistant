@@ -7,7 +7,7 @@ import {
   type MessageProcessorDependencies,
 } from "@/services/messageProcessor";
 import { showToast } from "@/components/Toast";
-import { getApiKey } from "@/lib/env";
+import { getApiKey, getLLMModel } from "@/lib/env";
 
 const OPENROUTER_API_KEY = getApiKey();
 

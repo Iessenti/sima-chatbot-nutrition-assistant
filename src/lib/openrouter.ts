@@ -1,5 +1,6 @@
 import type { ChatMessage } from './types'
 import { getSystemPrompt } from './systemPrompt'
+import { getLLMModel } from './env'
 
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions'
 
@@ -13,7 +14,7 @@ export async function callLLM(
   config: OpenRouterConfig,
   userData?: { profile?: unknown; entries: unknown[]; goal?: unknown; context?: unknown }
 ): Promise<string> {
-  const { apiKey, model = 'openai/gpt-4o-mini' } = config
+  const { apiKey, model = getLLMModel() } = config
   
   const systemPrompt = getSystemPrompt(
     userData?.profile as any,
