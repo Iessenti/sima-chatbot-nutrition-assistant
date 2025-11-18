@@ -17,7 +17,7 @@ interface ChatStore {
   loadHistory: () => void
 }
 
-export const useChatStore = create<ChatStore>((set, get) => ({
+export const useChatStore = create<ChatStore>((set) => ({
   messages: [],
   isLoading: false,
   processingState: 'idle',

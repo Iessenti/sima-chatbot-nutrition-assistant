@@ -5,6 +5,7 @@ import { useDataStore } from '@/store/dataStore'
 import { EntryEditor } from './EntryEditor'
 import { ActivityLogView } from './ActivityLogView'
 import { ActivityKBJUChart } from './ActivityKBJUChart'
+import { WeightChart } from './WeightChart'
 import { format, parseISO } from 'date-fns'
 import { Pencil, Trash2, Download, History, Calendar } from 'lucide-react'
 import type { DailyEntry } from '@/lib/types'
@@ -36,7 +37,7 @@ export function EntriesList() {
         <div className="mb-4 flex justify-between items-center">
           <div className="flex gap-2">
             <Button
-              variant={viewMode === 'history' ? 'default' : 'outline'}
+              variant="outline"
               size="sm"
               onClick={() => setViewMode('history')}
               className="gap-2"
@@ -44,7 +45,7 @@ export function EntriesList() {
               История действий
             </Button>
             <Button
-              variant={viewMode === 'entries' ? 'default' : 'outline'}
+              variant="default"
               size="sm"
               onClick={() => setViewMode('entries')}
               className="gap-2"

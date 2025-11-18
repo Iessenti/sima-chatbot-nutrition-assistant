@@ -1,5 +1,5 @@
 import type { UserProfile, DailyEntry, KBJUGoal, Stats, ActivityLevel } from './types'
-import { format, parseISO, startOfDay, endOfDay } from 'date-fns'
+import { parseISO } from 'date-fns'
 
 const ACTIVITY_MULTIPLIERS: Record<ActivityLevel, number> = {
   sedentary: 1.2,

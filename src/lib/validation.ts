@@ -48,7 +48,7 @@ export function validateProfile(data: unknown): { success: boolean; data?: any; 
     return { success: true, data: validated }
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { success: false, error: (error.errors || []).map(e => `${e.path.join('.')}: ${e.message}`).join(', ') }
+      return { success: false, error: error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join(', ') }
     }
     return { success: false, error: 'Ошибка валидации профиля' }
   }
@@ -60,7 +60,7 @@ export function validateEntry(data: unknown): { success: boolean; data?: any; er
     return { success: true, data: validated }
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { success: false, error: (error.errors || []).map(e => `${e.path.join('.')}: ${e.message}`).join(', ') }
+      return { success: false, error: error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join(', ') }
     }
     return { success: false, error: 'Ошибка валидации записи' }
   }
@@ -72,7 +72,7 @@ export function validateGoal(data: unknown): { success: boolean; data?: any; err
     return { success: true, data: validated }
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { success: false, error: (error.errors || []).map(e => `${e.path.join('.')}: ${e.message}`).join(', ') }
+      return { success: false, error: error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join(', ') }
     }
     return { success: false, error: 'Ошибка валидации цели' }
   }

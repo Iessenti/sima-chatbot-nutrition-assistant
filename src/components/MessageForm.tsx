@@ -4,8 +4,6 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { UserProfile, DailyEntry, Meal, Gender, ActivityLevel, Goal } from '@/lib/types'
-import { useDataStore } from '@/store/dataStore'
-import { calculateKBJUGoal } from '@/lib/calculations'
 
 interface StartFormProps {
   onSubmit: (profile: UserProfile) => void

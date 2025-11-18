@@ -4,14 +4,13 @@ import { useChatStore } from '@/store/chatStore'
 import { calculateKBJUGoal, calculateStats } from '@/lib/calculations'
 import { parseCommand, detectIntent } from '@/lib/commandHandler'
 import { clearAllData } from '@/lib/storage'
-import type { DailyEntry } from '@/lib/types'
 
 export function useCommands() {
   const { profile, setProfile, addEntry, setGoal, entries } = useDataStore()
   const { addMessage } = useChatStore()
 
   const handleCommand = useCallback(
-    (command: string, message: string): boolean => {
+    (_command: string, message: string): boolean => {
       const cmd = parseCommand(message) || detectIntent(message)
 
       if (!cmd) return false
