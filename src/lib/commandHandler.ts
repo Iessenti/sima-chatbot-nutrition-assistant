@@ -5,18 +5,25 @@ export type Command =
   | "stats"
   | "goal"
   | "help"
-  | "reset";
+  | "reset"
+  | "today"
+  | "export"
+  | "activity";
 
 export function parseCommand(message: string): Command | null {
   const trimmed = message.trim().toLowerCase();
 
   if (trimmed.startsWith("/start")) return "start";
   if (trimmed.startsWith("/profile")) return "profile";
+  if (trimmed.startsWith("/add")) return "update";
   if (trimmed.startsWith("/update")) return "update";
   if (trimmed.startsWith("/stats")) return "stats";
   if (trimmed.startsWith("/goal")) return "goal";
   if (trimmed.startsWith("/help")) return "help";
   if (trimmed.startsWith("/reset")) return "reset";
+  if (trimmed.startsWith("/today")) return "today";
+  if (trimmed.startsWith("/export")) return "export";
+  if (trimmed.startsWith("/activity")) return "activity";
 
   return null;
 }
@@ -101,6 +108,9 @@ export function getCommandDescription(command: Command): string {
     goal: "Изменить цели по весу и пересчитать КБЖУ",
     help: "Показать справку по командам и использованию",
     reset: "Сбросить все данные (требует подтверждения)",
+    today: "Показать прогресс и записи за сегодня",
+    export: "Экспортировать данные в JSON/CSV/PDF",
+    activity: "Показать историю действий",
   };
   return descriptions[command];
 }

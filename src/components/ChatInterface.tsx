@@ -5,6 +5,7 @@ import { Separator } from '@/components/ui/separator'
 import { MessageBubble } from './MessageBubble'
 import { ProcessingIndicator } from './ProcessingIndicator'
 import { EntriesList } from './EntriesList'
+import { CommandsMenu } from './CommandsMenu'
 import { useChat } from '@/hooks/useChat'
 import { useChatStore } from '@/store/chatStore'
 import { useDataStore } from '@/store/dataStore'
@@ -94,6 +95,7 @@ export function ChatInterface() {
         <div className="p-4 bg-gradient-to-r from-card/80 to-card/60 backdrop-blur-sm">
           <form onSubmit={handleSubmit}>
             <div className="flex gap-2.5">
+              <CommandsMenu />
               <Input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}

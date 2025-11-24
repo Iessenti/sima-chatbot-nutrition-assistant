@@ -8,6 +8,8 @@ import {
 } from "@/services/messageProcessor";
 import { showToast } from "@/components/Toast";
 import { getApiKey, getLLMModel } from "@/lib/env";
+import { processCommandMessage } from "@/services/commandProcessor";
+import { useActivityLogStore } from "@/store/activityLogStore";
 
 const OPENROUTER_API_KEY = getApiKey();
 
@@ -32,6 +34,7 @@ export function useChat() {
     updateContext,
     context,
   } = useDataStore();
+  const { entries: activityLog } = useActivityLogStore();
 
   const sendMessage = useCallback(
     async (content: string) => {
@@ -45,6 +48,24 @@ export function useChat() {
       };
 
       addMessage(userMessage);
+
+      const commandResult = processCommandMessage(userMessage.content, {
+        profile,
+        entries,
+        goal,
+        activityLog,
+      });
+
+      if (commandResult.handled && commandResult.response) {
+        const assistantMessage: ChatMessage = {
+          id: `assistant-${Date.now()}`,
+          role: "assistant",
+          content: commandResult.response,
+          timestamp: Date.now(),
+        };
+        addMessage(assistantMessage);
+        return;
+      }
 
       setLoading(true);
       setProcessingState("extracting", "Анализирую данные...");
@@ -118,6 +139,7 @@ export function useChat() {
       setGoal,
       updateProfile,
       updateContext,
+      activityLog,
     ]
   );
 
