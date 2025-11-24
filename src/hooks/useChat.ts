@@ -10,6 +10,8 @@ import { showToast } from "@/components/Toast";
 import { getApiKey, getLLMModel } from "@/lib/env";
 import { processCommandMessage } from "@/services/commandProcessor";
 import { useActivityLogStore } from "@/store/activityLogStore";
+import { clearAllData } from "@/lib/storage";
+import { parseCommand } from "@/lib/commandHandler";
 
 const OPENROUTER_API_KEY = getApiKey();
 
@@ -21,6 +23,7 @@ export function useChat() {
     updateLastMessage,
     setLoading,
     setProcessingState,
+    clearChat,
   } = useChatStore();
   const {
     profile,
@@ -33,6 +36,7 @@ export function useChat() {
     setGoal,
     updateContext,
     context,
+    loadData,
   } = useDataStore();
   const { entries: activityLog } = useActivityLogStore();
 
@@ -48,6 +52,132 @@ export function useChat() {
       };
 
       addMessage(userMessage);
+
+      const trimmedContent = content.trim().toLowerCase();
+      const command = parseCommand(trimmedContent);
+
+      if (command === "reset") {
+        const assistantMessage: ChatMessage = {
+          id: `assistant-${Date.now()}`,
+          role: "assistant",
+          content:
+            '⚠️ Внимание! Это удалит все данные: профиль, записи, цели, историю чата.\n\nНапиши "подтверждаю" или "да" для подтверждения, или "отмена" для отмены.',
+          timestamp: Date.now(),
+        };
+        addMessage(assistantMessage);
+        return;
+      }
+
+      const userMessages = messages.filter((m) => m.role === "user");
+      const lastUserMessage = userMessages[userMessages.length - 1];
+      const previousUserMessage = userMessages[userMessages.length - 2];
+
+      const wasResetCommand =
+        (lastUserMessage &&
+          parseCommand(lastUserMessage.content) === "reset") ||
+        (previousUserMessage &&
+          parseCommand(previousUserMessage.content) === "reset");
+
+      const isResetConfirmation =
+        wasResetCommand &&
+        (trimmedContent === "подтверждаю" ||
+          trimmedContent === "да" ||
+          trimmedContent === "подтверждаю сброс" ||
+          trimmedContent.includes("подтверждаю"));
+
+      if (isResetConfirmation) {
+        clearAllData();
+        clearChat();
+        loadData();
+        useActivityLogStore.getState().loadLog();
+
+        const assistantMessage: ChatMessage = {
+          id: `assistant-${Date.now()}`,
+          role: "assistant",
+          content:
+            "✅ Все данные удалены. Используй /start для создания нового профиля.",
+          timestamp: Date.now(),
+        };
+        addMessage(assistantMessage);
+        showToast("Все данные сброшены", "success");
+        return;
+      }
+
+      const isResetCancellation =
+        (trimmedContent === "отмена" &&
+          lastUserMessage &&
+          parseCommand(lastUserMessage.content) === "reset") ||
+        (trimmedContent === "отмена" &&
+          previousUserMessage &&
+          parseCommand(previousUserMessage.content) === "reset");
+
+      if (isResetCancellation) {
+        const assistantMessage: ChatMessage = {
+          id: `assistant-${Date.now()}`,
+          role: "assistant",
+          content: "Отменено. Данные сохранены.",
+          timestamp: Date.now(),
+        };
+        addMessage(assistantMessage);
+        return;
+      }
+
+      if (command === "start") {
+        if (profile) {
+          const assistantMessage: ChatMessage = {
+            id: `assistant-${Date.now()}`,
+            role: "assistant",
+            content:
+              "У тебя уже есть профиль. Используй /profile для просмотра или изменения.",
+            timestamp: Date.now(),
+          };
+          addMessage(assistantMessage);
+          return;
+        } else {
+          const assistantMessage: ChatMessage = {
+            id: `assistant-${Date.now()}`,
+            role: "assistant",
+            content:
+              "Давай создадим твой профиль! Мне нужно узнать:\n- Рост (см)\n- Вес (кг)\n- Возраст\n- Пол (мужской/женский)\n- Уровень активности (sedentary/light/moderate/active/very_active)\n- Цель (похудение/поддержание/набор веса)\n\nНапиши эти данные, или я могу задать вопросы по очереди.",
+            timestamp: Date.now(),
+          };
+          addMessage(assistantMessage);
+          return;
+        }
+      }
+
+      if (command === "export") {
+        try {
+          const { exportToJSON, exportToCSV, exportToPDF } = await import(
+            "@/lib/export"
+          );
+          exportToJSON(profile, entries, goal);
+          exportToCSV(entries);
+          exportToPDF(profile, entries, goal);
+
+          const assistantMessage: ChatMessage = {
+            id: `assistant-${Date.now()}`,
+            role: "assistant",
+            content:
+              "✅ Данные экспортированы в форматах JSON, CSV и PDF. Файлы должны начать загружаться автоматически.",
+            timestamp: Date.now(),
+          };
+          addMessage(assistantMessage);
+          showToast("Данные экспортированы", "success");
+          return;
+        } catch (error) {
+          console.error("Error exporting data:", error);
+          const assistantMessage: ChatMessage = {
+            id: `assistant-${Date.now()}`,
+            role: "assistant",
+            content:
+              "❌ Произошла ошибка при экспорте данных. Попробуй еще раз.",
+            timestamp: Date.now(),
+          };
+          addMessage(assistantMessage);
+          return;
+        }
+      }
 
       const commandResult = processCommandMessage(userMessage.content, {
         profile,
@@ -140,6 +270,8 @@ export function useChat() {
       updateProfile,
       updateContext,
       activityLog,
+      clearChat,
+      loadData,
     ]
   );
 
